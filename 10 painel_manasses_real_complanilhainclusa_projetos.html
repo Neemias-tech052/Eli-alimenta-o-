@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FJU - Tribo de Manassés (Nação Invencível)</title>
+  <style>
+    :root {
+      --azul-fju: #3949ab; 
+      --vermelho-fju: #b71c1c;
+      --laranja-fju: #ff9800; 
+      --fundo: #f4f6f8;
+      --card-bg: #ffffff;
+      --texto-escuro: #212121;
+      --texto-claro: #757575;
+      --ouro: #FBC02D;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--fundo); margin: 0; padding: 15px; color: var(--texto-escuro); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    /* CABEÇALHO FINO E RESPONSIVO RESTAURADO */
+    header { display: flex; flex-direction: column; background: var(--azul-fju); padding: 15px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); margin-bottom: 20px; border-bottom: 4px solid var(--vermelho-fju); color: white; gap: 15px; }
+    @media(min-width: 1000px) { header { flex-direction: row; justify-content: space-between; align-items: center; gap: 20px;} }
+    
+    .logo-area { display: flex; flex-direction: column; }
+    .logo-text { font-size: 26px; font-weight: 900; color: white; letter-spacing: -1px; line-height: 1.1; }
+    .sub-logo { font-size: 15px; font-weight: bold; color: var(--laranja-fju); }
+    .coordenadores-texto { font-size: 12px; color: #e3f2fd; font-weight: normal; margin-top: 4px; }
+    
+    /* BLOCOS DE ESTATÍSTICAS ALINHADOS */
+    .header-stats { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; justify-content: flex-end;}
+    .stat-box { min-width: 85px; text-align: center; background: rgba(255,255,255,0.1); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column; justify-content: center; }
+    .stat-box h4 { margin: 0; font-size: 10px; color: #e3f2fd; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-box span { font-size: 22px; font-weight: bold; color: white; display: block; margin-top: 5px; line-height: 1; }
+    .stat-box .percent { font-size: 11px; color: var(--ouro); margin-top: 4px; }
+    
+    .box-destaque { border-bottom: 3px solid var(--ouro); background: rgba(255,255,255,0.15); }
+    .box-frequencia { border-bottom: 3px solid #4CAF50; background: rgba(255,255,255,0.15); }
+    .box-frequencia span { font-size: 15px; }
+
+    /* Linha de Acompanhamento de Projetos (Cinza) */
+    .linha-projetos-container { background: #e0e0e0; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+    .linha-projetos-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+    .linha-projetos-titulo { font-size: 13px; font-weight: bold; color: var(--azul-fju); text-transform: uppercase; }
+    .linha-projetos-camisas { font-size: 12px; background: white; padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; }
+    .grid-projetos-botoes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn-projeto-stat { background: white; border: 1px solid #ccc; padding: 10px 14px; border-radius: 6px; cursor: pointer; text-align: center; min-width: 90px; transition: 0.2s; }
+    .btn-projeto-stat:hover { border-color: var(--azul-fju); background: #f5f5f5; }
+    .btn-projeto-stat h5 { margin: 0; font-size: 10px; color: var(--texto-claro); text-transform: uppercase; }
+    .btn-projeto-stat span { font-size: 18px; font-weight: bold; color: var(--azul-fju); display: block; margin-top: 2px; }
+    .detalhes-projeto-expandido { display: none; background: white; padding: 12px; border-radius: 8px; margin-top: 12px; border: 1px solid #ccc; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+
+    .controls { display: flex; flex-direction: column; margin-bottom: 20px; gap: 15px; align-items: stretch; }
+    @media(min-width: 600px) { .controls { flex-direction: row; justify-content: space-between; align-items: center; } }
+    .filtros select { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; color: var(--azul-fju); outline: none; font-weight: bold; background: white; width: 100%; }
+    @media(min-width: 600px) { .filtros select { width: 250px; } }
+
+    .secao-titulo { font-size: 18px; font-weight: bold; color: var(--azul-fju); margin: 25px 0 15px 0; padding-bottom: 5px; border-bottom: 2px solid #ddd; display: flex; align-items: center; gap: 8px; }
+    
+    /* Painel de Encontros */
+    .encontro-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); margin-bottom: 10px; }
+    .encontro-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .encontro-data { font-size: 16px; font-weight: bold; color: var(--azul-fju); min-width: 80px; }
+    .encontro-barras { flex: 1; margin: 0 20px; }
+    .encontro-barras-texto { font-size: 12px; margin-bottom: 4px; display: flex; justify-content: space-between; font-weight: bold; }
+    .encontro-barras-grafico { width: 100%; background: #ffebee; height: 10px; border-radius: 5px; overflow: hidden; display: flex; }
+    .enc-presenca { background: #4CAF50; height: 100%; }
+    .enc-falta { background: #f44336; height: 100%; }
+    .encontro-detalhes { display: none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px; gap: 20px; flex-wrap: wrap; }
+    .coluna-presenca { flex: 1; min-width: 200px; background: #e8f5e9; padding: 10px; border-radius: 8px; }
+    .coluna-falta { flex: 1; min-width: 200px; background: #ffebee; padding: 10px; border-radius: 8px; }
+    .coluna-titulo { margin-top: 0; padding-bottom: 5px; font-size: 14px; text-transform: uppercase; }
+    .linha-nome { font-size: 14px; line-height: 1.8; color: #333; }
+    .linha-nome span { font-weight: bold; color: #777; font-size: 12px; margin-left: 5px; }
+
+    /* Cards dos Jovens */
+    .grid-jovens { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #eaeaea; display: flex; flex-direction: column; transition: 0.3s; position: relative; }
+    .card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.08); border-color: var(--azul-fju); }
+    
+    .alerta-resgate { border-left: 5px solid #ff9800; } 
+    .alerta-urgente { border-left: 5px solid var(--vermelho-fju); } 
+
+    .avatar-area { position: relative; }
+    .iniciais { width: 45px; height: 45px; border-radius: 50%; background: #e3f2fd; color: var(--azul-fju); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; border: 2px solid var(--azul-fju); }
+    .badge-espirito { position: absolute; bottom: -2px; right: -2px; font-size: 12px; background: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .info-principal { flex: 1; margin-left: 12px; }
+    .nome { font-size: 16px; font-weight: bold; color: var(--texto-escuro); margin: 0 0 2px 0; }
+    .categoria-tag { font-size: 11px; color: white; background: var(--azul-fju); padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block; }
+    
+    .badge-status { font-size: 10px; padding: 4px 8px; border-radius: 10px; font-weight: bold; text-transform: uppercase; }
+    .status-ativo { background: #e8f5e9; color: #2e7d32; }
+    .status-alerta { background: #fff3e0; color: #ef6c00; }
+    .status-urgente { background: #ffebee; color: #c62828; }
+
+    .progresso-container { margin: 10px 0; }
+    .progresso-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: bold; color: var(--texto-claro); }
+    .barra-fundo { width: 100%; background: #e0e0e0; height: 6px; border-radius: 3px; overflow: hidden; }
+    .barra-preenchimento { height: 100%; border-radius: 3px; background: #4CAF50; }
+    
+    .selos-projetos { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 4px 0; min-height: 20px; }
+    .selo-item { font-size: 11px; background: #f0f4c3; color: #33691e; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .selo-sem-projeto { background: #ffe0b2; color: #e65100; }
+    
+    .camisa-status { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
+    .camisa-sim { color: #1565c0; }
+    .camisa-nao { color: #c62828; }
+
+    .dados-rapidos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; border-top: 1px dashed #eee; padding-top: 10px; margin-bottom: 10px; font-size: 12px; color: var(--texto-claro); }
+    .dados-rapidos strong { display: block; font-size: 13px; color: var(--texto-escuro); margin-top: 1px; }
+
+    .btn-dossie { width: 100%; background: #f9f9f9; border: 1px solid #ddd; color: var(--azul-fju); padding: 10px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-dossie:hover { background: var(--azul-fju); color: white; }
+
+    /* Modal / Painel do Jovem */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
+    .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 12px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; border-top: 6px solid var(--azul-fju); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+    .fechar-modal { position: absolute; top: 10px; right: 15px; font-size: 28px; cursor: pointer; color: #888; border: none; background: none; font-weight: bold;}
+    
+    .modal-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
+    @media(min-width: 480px) { .modal-grid { grid-template-columns: 1fr 1fr; } }
+    .modal-box { background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #eee; }
+    .modal-box h4 { margin: 0 0 8px 0; font-size: 13px; color: var(--azul-fju); border-bottom: 1px solid #ddd; padding-bottom: 3px; text-transform: uppercase;}
+    
+    .chk-linha { font-size: 13px; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; color: var(--texto-escuro); }
+    .box-alerta-pastoral { display: none; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 13px; }
+    
+    .grid-presencas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 12px; margin-top: 5px; }
+    .presenca-item { background: white; border: 1px solid #ddd; padding: 6px; border-radius: 4px; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body onload="renderizarSistema()">
+
+<div class="container">
+  <header>
+    <div class="logo-area">
+      <div class="logo-text">TRIBO DE MANASSÉS<br><span class="sub-logo">Nação Invencível | FJU</span></div>
+      <div class="coordenadores-texto">Coordenadores: José Junior e Carla</div>
+    </div>
+    
+    <div class="header-stats">
+      <div class="stat-box">
+        <h4>Obreiros</h4>
+        <span id="count-obr">0</span>
+      </div>
+      <div class="stat-box">
+        <h4>Colaboradores</h4>
+        <span id="count-col">0</span>
+      </div>
+      <div class="stat-box">
+        <h4>CPOs</h4>
+        <span id="count-cpo">0</span>
+      </div>
+      <div class="stat-box box-destaque" style="border-color: #111;">
+        <h4 style="color: var(--ouro);">Jovens Firmes</h4>
+        <span id="count-jf" style="color: var(--ouro);">0</span>
+      </div>
+      <div class="stat-box box-destaque">
+        <h4>ESPÍRITO SANTO</h4>
+        <span id="stat-es-jovens">0 / 0</span>
+        <div class="percent" id="stat-es-pct">0%</div>
+      </div>
+      <div class="stat-box">
+        <h4>Homens</h4>
+        <span id="stat-homens">0</span>
+      </div>
+      <div class="stat-box">
+        <h4>Mulheres</h4>
+        <span id="stat-mulheres">0</span>
+      </div>
+      <div class="stat-box box-frequencia">
+        <h4>Frequência (Jovens)</h4>
+        <span id="stat-freq-maio">Maio: 0%</span>
+        <div class="percent" id="stat-freq-junho" style="color: #81c784;">Junho: 0%</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="linha-projetos-container">
+     <div class="linha-projetos-top">
+         <div class="linha-projetos-titulo">Acompanhamento de Projetos (Ativos)</div>
+         <div class="linha-projetos-camisas">
+             👕 Com Camisa do Projeto: <span id="total-com-camisa" style="color: var(--azul-fju);">0</span> | 
+             👕 Sem Camisa do Projeto: <span id="total-sem-camisa" style="color: var(--vermelho-fju);">0</span>
+         </div>
+     </div>
+     <div class="grid-projetos-botoes" id="painel-projetos-header"></div>
+     <div class="detalhes-projeto-expandido" id="detalhes-projeto-clicado"></div>
+  </div>
+
+  <div class="controls">
+    <div class="filtros">
+      <select id="filtroCategoria" onchange="renderizarSistema()">
+        <option value="Todos">Toda a Tribo</option>
+        <option value="Obreiro">Obreiros</option>
+        <option value="CPO">CPOs</option>
+        <option value="Colaborador">Colaboradores</option>
+        <option value="Base Forte">Base Forte (Jovens)</option>
+        <option value="Sem Projeto">Filtro: Sem Projeto</option>
+        <option value="Alerta">Filtro: Em Alerta / Resgate ⚠️</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="conteudo-tribo">
+    
+    <div id="painel-encontros-container"></div>
+
+    <div id="secoes-cards">
+        <div class="secao-titulo">🛡️ Obreiros</div>
+        <div class="grid-jovens" id="grid-Obreiro"></div>
+
+        <div class="secao-titulo">⭐ CPOs</div>
+        <div class="grid-jovens" id="grid-CPO"></div>
+
+        <div class="secao-titulo">🤝 Colaboradores</div>
+        <div class="grid-jovens" id="grid-Colaborador"></div>
+
+        <div class="secao-titulo">💪 Base Forte (Jovens Firmes)</div>
+        <div class="grid-jovens" id="grid-Base-Forte"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDossie">
+  <div class="modal-content">
+    <button class="fechar-modal" onclick="fecharModal()">×</button>
+    <h2 id="modal-nome" style="margin:0; color:var(--azul-fju); font-size: 22px;">Nome do Jovem</h2>
+    <p id="modal-categoria" style="margin:2px 0 10px 0; color:var(--texto-claro); font-size: 14px;">Categoria</p>
+    
+    <div id="alerta-pastoral"></div>
+
+    <div class="modal-grid">
+      <div class="modal-box">
+        <h4>Histórico Espiritual</h4>
+        <div class="chk-linha"><input type="checkbox" id="chk-es" disabled> Batizado c/ Espírito Santo</div>
+        <div class="chk-linha"><input type="checkbox" id="chk-aguas" disabled> Batizado nas Águas</div>
+        <div style="font-size: 13px; margin-top:8px; color: var(--texto-claro);">
+          Chegou na Igreja: <strong id="modal-data-igreja" style="color:var(--texto-escuro);"></strong><br>
+          Chegou na Tribo: <strong id="modal-data-tribo" style="color:var(--texto-escuro);"></strong><br>
+          Como conheceu: <strong id="modal-como" style="color:var(--texto-escuro);"></strong>
+        </div>
+      </div>
+      
+      <div class="modal-box">
+        <h4>Vínculo Familiar</h4>
+        <div style="font-size: 13px; color: var(--texto-claro);">
+          Estado Civil: <strong id="modal-civil" style="color:var(--texto-escuro);"></strong><br>
+          Cônjuge/Namorado(a): <strong id="modal-conjuge" style="color:var(--vermelho-fju);"></strong>
+        </div>
+      </div>
+
+      <div class="modal-box" style="grid-column: 1 / -1;">
+        <h4>Frequência e Projetos FJU</h4>
+        <div style="font-size: 13px; margin-bottom: 8px;">
+          Projetos Atuais: <strong id="modal-projetos" style="color: var(--azul-fju);"></strong>
+        </div>
+        <div style="display:flex; justify-content: space-between; background:#fff; padding:8px; border-radius:6px; border:1px solid #ddd; font-size:12px;">
+           <div>Frequência Atual: <strong id="modal-freq-ano">0%</strong></div>
+           <div>Faltas Seguidas: <strong id="modal-faltas-seq" style="color:var(--vermelho-fju);">0</strong></div>
+        </div>
+        <div id="modal-reuniao-secundaria" style="font-size: 12px; margin-top:8px; font-weight:bold;"></div>
+      </div>
+      
+      <div class="modal-box" style="grid-column: 1 / -1; background: #e3f2fd; border-color: #bbdefb;">
+        <h4>Histórico de Encontros Jovens</h4>
+        <div class="grid-presencas" id="modal-presencas"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // BANCO DE DADOS ATUALIZADO 
+  // - Correção: Jozeladio e Elisangela "sem camisa"
+  // - Correção: Luciana foi para Cultura
+  let baseJovens = [
+    {nome: 'Jozeladio', categoria: 'Obreiro', genero: 'M', espiritoSanto: true, batismoAguas: true, projetos: 'Atalaia', camisa: false, estadoCivil: 'Casado', conjuge: 'Elisangela', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Elisangela', categoria: 'Obreiro', genero: 'F', espiritoSanto: true, batismoAguas: true, projetos: 'Atalaia', camisa: false, estadoCivil: 'Casado', conjuge: 'Jozeladio', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Ob Ivan', categoria: 'Obreiro', genero: 'M', espiritoSanto: true, batismoAguas: true, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 1, presencas: [1, 1, 1, 1, 1, 0]},
+    {nome: 'Ob Neilyane', categoria: 'Obreiro', genero: 'F', espiritoSanto: true, batismoAguas: true, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Ob Bruno', categoria: 'Obreiro', genero: 'M', espiritoSanto: true, batismoAguas: true, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 20, faltasSeguidas: 4, presencas: [1, 0, 0, 0, 0, 0]},
+    {nome: 'Ob Denise', categoria: 'Obreiro', genero: 'F', espiritoSanto: true, batismoAguas: true, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 20, faltasSeguidas: 4, presencas: [1, 0, 0, 0, 0, 0]},
+    {nome: 'Cleberson', categoria: 'Colaborador', genero: 'M', espiritoSanto: true, batismoAguas: true, projetos: 'Help', camisa: true, estadoCivil: 'Casado', conjuge: 'Poliana', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 0, 1, 1, 1]},
+    {nome: 'Luciana', categoria: 'Colaborador', genero: 'F', espiritoSanto: true, batismoAguas: true, projetos: 'Cultura', camisa: true, estadoCivil: 'Casado', conjuge: 'Alexandre', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 0, 1, 0, 1]},
+    {nome: 'Luiz Fernando', categoria: 'Colaborador', genero: 'M', espiritoSanto: true, batismoAguas: true, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Namorando', conjuge: 'A confirmar', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 0, faltasSeguidas: 5, presencas: [0, 0, 0, 0, 0, 0]},
+    {nome: 'Alexandre', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Casado', conjuge: 'Luciana', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 1, 0, 0, 1]},
+    {nome: 'André Luiz', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Esportes', camisa: true, estadoCivil: 'Casado', conjuge: 'Daniella', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Daniella', categoria: 'Base Forte', genero: 'F', espiritoSanto: false, batismoAguas: false, projetos: 'Esportes', camisa: true, estadoCivil: 'Casado', conjuge: 'André Luiz', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Barbara', categoria: 'Base Forte', genero: 'F', espiritoSanto: false, batismoAguas: false, projetos: 'Cultura', camisa: true, estadoCivil: 'Namorando', conjuge: 'Wendell', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 0, 1, 1, 1]},
+    {nome: 'Wendell', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Namorando', conjuge: 'Barbara', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 0, 1, 1, 1]},
+    {nome: 'Douglas Denis', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Esportes', camisa: true, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 40, faltasSeguidas: 2, presencas: [1, 0, 1, 0, 1, 0]},
+    {nome: 'Lucas Samuel', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Atalaia', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 40, faltasSeguidas: 2, presencas: [1, 0, 1, 0, 0, 0]},
+    {nome: 'Diogo Piscina', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 20, faltasSeguidas: 4, presencas: [1, 0, 0, 0, 0, 0]},
+    {nome: 'Guilherme', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Esportes', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 100, faltasSeguidas: 0, presencas: [1, 1, 1, 1, 1, 1]},
+    {nome: 'Vanessa', categoria: 'Base Forte', genero: 'F', espiritoSanto: false, batismoAguas: false, projetos: 'Esportes', camisa: true, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 1, 0, 1, 1]},
+    {nome: 'Matheus Silva', categoria: 'Base Forte', genero: 'M', espiritoSanto: true, batismoAguas: false, projetos: 'Universitários', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 40, faltasSeguidas: 0, presencas: [0, 0, 0, 1, 1, 1]},
+    {nome: 'Gustavo Almeida', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Universitários', camisa: true, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 1, 0, 1, 1]},
+    {nome: 'Ian', categoria: 'Base Forte', genero: 'M', espiritoSanto: false, batismoAguas: false, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Solteiro', conjuge: 'Nenhum', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 40, faltasSeguidas: 0, presencas: [0, 0, 0, 1, 0, 1]},
+    {nome: 'Poliana', categoria: 'Base Forte', genero: 'F', espiritoSanto: false, batismoAguas: false, projetos: 'Sem Projeto', camisa: false, estadoCivil: 'Casado', conjuge: 'Cleberson', dataIgreja: '-', dataTribo: '-', comoConheceu: '-', frequenciaAno: 80, faltasSeguidas: 0, presencas: [1, 1, 0, 1, 1, 1]}
+  ];
+
+  const datasEventos = ['02/05', '09/05', '16/05', '23/05', '31/05 (Mega)', '06/06'];
+  const mesesEncontro = [
+      { nome: 'Maio', indices: [0, 1, 2, 3, 4] },
+      { nome: 'Junho', indices: [5] }
+  ];
+
+  function renderizarSistema() {
+    renderizarCards();
+    renderizarPainelEncontros();
+  }
+
+  function renderizarPainelEncontros() {
+    const container = document.getElementById('painel-encontros-container');
+    let html = `<div class="secao-titulo">📅 Painel de Encontros Jovens (Base Forte)</div>`;
+
+    mesesEncontro.forEach(mes => {
+        html += `<h3 style="color: var(--azul-fju); margin-top: 15px; font-size: 16px;">Mês: ${mes.nome}</h3>`;
+        html += `<div style="display:flex; flex-direction:column; gap:10px;">`;
+        
+        mes.indices.forEach(i => {
+            let dataNome = datasEventos[i];
+            let presentes = []; let ausentes = [];
+            
+            baseJovens.forEach(j => {
+                if (['Ob Ivan', 'Ob Bruno', 'Ob Neilyane', 'Ob Denise'].includes(j.nome)) return;
+                
+                if (j.categoria === 'Base Forte') {
+                    if (j.presencas[i] === 1) presentes.push(j);
+                    else ausentes.push(j);
+                }
+            });
+
+            // Ordem Homens primeiro, Mulheres depois
+            const ordenarPorGenero = (a, b) => {
+                if (a.genero === 'M' && b.genero === 'F') return -1;
+                if (a.genero === 'F' && b.genero === 'M') return 1;
+                return a.nome.localeCompare(b.nome);
+            };
+            presentes.sort(ordenarPorGenero);
+            ausentes.sort(ordenarPorGenero);
+
+            let total = presentes.length + ausentes.length;
+            let pctFaltas = total > 0 ? Math.round((ausentes.length / total) * 100) : 0;
+            let pctPresenca = total > 0 ? Math.round((presentes.length / total) * 100) : 0;
+
+            let listaPres = presentes.map(p => `<div class="linha-nome">🟢 ${p.nome} <span style="color:#777">(${p.genero})</span></div>`).join('');
+            let listaAus = ausentes.map(p => `<div class="linha-nome">❌ ${p.nome} <span style="color:#777">(${p.genero})</span></div>`).join('');
+
+            html += `
+            <div class="encontro-card">
+                <div class="encontro-header" onclick="document.getElementById('detalhe-enc-${i}').style.display = document.getElementById('detalhe-enc-${i}').style.display === 'none' ? 'flex' : 'none'">
+                    <div class="encontro-data">${dataNome}</div>
+                    <div class="encontro-barras">
+                        <div class="encontro-barras-texto">
+                            <span style="color:#2e7d32;">Presença: ${pctPresenca}%</span>
+                            <span style="color:var(--vermelho-fju);">Faltas: ${pctFaltas}%</span>
+                        </div>
+                        <div class="encontro-barras-grafico">
+                            <div class="enc-presenca" style="width:${pctPresenca}%;"></div>
+                            <div class="enc-falta" style="width:${pctFaltas}%;"></div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:#888;">🔽 Ver Detalhes</div>
+                </div>
+
+                <div id="detalhe-enc-${i}" class="encontro-detalhes">
+                    <div class="coluna-presenca">
+                        <h4 class="coluna-titulo" style="color:#2e7d32; border-bottom:1px solid #c8e6c9;">Presentes (${presentes.length})</h4>
+                        ${listaPres}
+                    </div>
+                    <div class="coluna-falta">
+                        <h4 class="coluna-titulo" style="color:#c62828; border-bottom:1px solid #ffcdd2;">Faltaram (${ausentes.length})</h4>
+                        ${listaAus}
+                    </div>
+                </div>
+            </div>`;
+        });
+        html += `</div>`;
+    });
+
+    container.innerHTML = html;
+  }
+
+  function mostrarDetalhesProjeto(projName) {
+      const div = document.getElementById('detalhes-projeto-clicado');
+      if (div.style.display === 'block' && div.getAttribute('data-atual') === projName) {
+          div.style.display = 'none'; return;
+      }
+      div.setAttribute('data-atual', projName); div.style.display = 'block';
+      
+      const ordemHierarquia = { 'Obreiro': 1, 'Colaborador': 2, 'CPO': 3, 'Base Forte': 4 };
+      let filtrados = baseJovens.filter(j => {
+          if (['Ob Ivan', 'Ob Bruno', 'Ob Neilyane', 'Ob Denise'].includes(j.nome)) return false;
+          if (projName === 'Sem Projeto') return j.projetos.toLowerCase().includes('sem projeto') || j.projetos === '';
+          return j.projetos.includes(projName);
+      });
+      
+      filtrados.sort((a, b) => {
+          if(ordemHierarquia[a.categoria] !== ordemHierarquia[b.categoria]) return ordemHierarquia[a.categoria] - ordemHierarquia[b.categoria];
+          if (a.genero === 'M' && b.genero === 'F') return -1;
+          if (a.genero === 'F' && b.genero === 'M') return 1;
+          return a.nome.localeCompare(b.nome);
+      });
+      
+      let html = `<h4 style="margin:0 0 10px 0; color: var(--azul-fju); text-transform: uppercase; font-size: 14px;">Membros Ativos em: ${projName}</h4>`;
+      if(filtrados.length === 0) {
+          html += `<div style="font-size:13px; color:#666;">Nenhum membro ativo.</div>`;
+      } else {
+          filtrados.forEach(p => {
+              let camisaTxt = projName === 'Sem Projeto' ? '' : (p.camisa ? ' - <span style="color:#1565c0; font-weight:bold;">👕 Com Camisa do Projeto</span>' : ' - <span style="color:#c62828; font-weight:bold;">👕 Sem Camisa do Projeto</span>');
+              html += `<div style="font-size:14px; padding: 6px 0; border-bottom: 1px dashed #eee;">🟢 <strong>${p.nome}</strong> (${p.categoria}) ${camisaTxt}</div>`;
+          });
+      }
+      div.innerHTML = html;
+  }
+
+  function renderizarCards() {
+    const grids = {
+      'Obreiro': document.getElementById('grid-Obreiro'),
+      'CPO': document.getElementById('grid-CPO'),
+      'Colaborador': document.getElementById('grid-Colaborador'),
+      'Base Forte': document.getElementById('grid-Base-Forte')
+    };
+    Object.values(grids).forEach(g => g.innerHTML = '');
+    
+    const filtro = document.getElementById('filtroCategoria').value;
+    
+    let stats = { obr:0, col:0, cpo:0, jf:0, es:0, h:0, m:0, semProj:0, camisaSim:0, camisaNao:0, maioEsp:0, maioPres:0, junEsp:0, junPres:0 };
+    let contagemProjetos = {};
+
+    baseJovens.forEach((j, index) => {
+      const ehTransferido = ['Ob Ivan', 'Ob Bruno', 'Ob Neilyane', 'Ob Denise'].includes(j.nome);
+
+      if (!ehTransferido) {
+          if (j.categoria === 'Obreiro') stats.obr++;
+          if (j.categoria === 'Colaborador') stats.col++;
+          if (j.categoria === 'CPO') stats.cpo++;
+          
+          if (j.projetos.toLowerCase().includes('sem projeto') || j.projetos === '') {
+              if (j.categoria === 'Base Forte') stats.semProj++;
+          } else {
+              j.projetos.split(',').forEach(p => {
+                  let pName = p.trim(); contagemProjetos[pName] = (contagemProjetos[pName] || 0) + 1;
+              });
+              if (j.camisa) stats.camisaSim++; else stats.camisaNao++;
+          }
+
+          if (j.categoria === 'Base Forte') {
+              stats.jf++;
+              if (j.espiritoSanto) stats.es++;
+              if (j.genero === 'M') stats.h++;
+              if (j.genero === 'F') stats.m++;
+              
+              stats.maioEsp += 5; stats.maioPres += (j.presencas[0] + j.presencas[1] + j.presencas[2] + j.presencas[3] + j.presencas[4]);
+              stats.junEsp += 1; stats.junPres += j.presencas[5];
+          }
+      }
+
+      if (filtro === 'Obreiro' && j.categoria !== 'Obreiro') return;
+      if (filtro === 'CPO' && j.categoria !== 'CPO') return;
+      if (filtro === 'Colaborador' && j.categoria !== 'Colaborador') return;
+      if (filtro === 'Base Forte' && j.categoria !== 'Base Forte') return;
+      if (filtro === 'Sem Projeto' && (!j.projetos.toLowerCase().includes('sem projeto') && j.projetos !== '')) return;
+      if (filtro === 'Alerta' && j.faltasSeguidas === 0) return; 
+
+      let iniciais = j.nome.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+      
+      // NOVA LÓGICA DE ALERTA: 0 Faltas = ATIVO | 1 Falta = ATENÇÃO LIGAR | 2+ = RESGATE
+      let classeAlerta = ''; let statusTexto = 'ATIVO'; let statusClasse = 'status-ativo'; let simboloBuraco = '';
+      if(j.faltasSeguidas === 1) { 
+          classeAlerta = 'alerta-resgate'; 
+          statusTexto = '⚠️ ATENÇÃO LIGAR'; 
+          statusClasse = 'status-alerta'; 
+      } else if(j.faltasSeguidas >= 2) { 
+          classeAlerta = 'alerta-urgente'; 
+          statusTexto = 'RESGATE'; 
+          statusClasse = 'status-urgente'; 
+          simboloBuraco = '🕳️ '; 
+      }
+
+      let corFreq = '#4CAF50';
+      if(j.frequenciaAno < 75) corFreq = '#FBC02D';
+      if(j.frequenciaAno < 50) corFreq = '#b71c1c';
+
+      let selosHtml = ''; let camisaInfo = '';
+      if(j.projetos.toLowerCase().includes('sem projeto') || j.projetos === '') {
+         selosHtml = `<span class="selo-item selo-sem-projeto">⭕ Sem Projeto</span>`;
+      } else {
+         j.projetos.split(',').forEach(p => { selosHtml += `<span class="selo-item">🔹 ${p.trim()}</span>`; });
+         if(j.camisa) {
+             camisaInfo = `<div class="camisa-status camisa-sim">👕 Com Camisa do Projeto</div>`;
+         } else {
+             camisaInfo = `<div class="camisa-status camisa-nao">👕 Sem Camisa do Projeto</div>`;
+         }
+      }
+
+      let reuniaoTexto = j.genero === 'M' ? 'IntelliMen' : 'Godllywood';
+      let gridAlvo = grids[j.categoria] || grids['Base Forte'];
+
+      gridAlvo.innerHTML += `
+        <div class="card ${classeAlerta}">
+          <div class="card-header">
+            <div class="avatar-area">
+                <div class="iniciais">${iniciais}</div>
+                <div class="badge-espirito">${j.espiritoSanto ? '🔥' : '⚪'}</div>
+            </div>
+            <div class="info-principal">
+              <h3 class="nome">${simboloBuraco}${j.nome}</h3>
+              <span class="categoria-tag">${j.categoria}</span>
+            </div>
+            <div class="badge-status ${statusClasse}">${statusTexto}</div>
+          </div>
+          
+          <div class="progresso-container">
+            <div class="progresso-header">
+              <span>Frequência Encontros</span>
+              <span style="color: ${corFreq}">${j.frequenciaAno}%</span>
+            </div>
+            <div class="barra-fundo"><div class="barra-preenchimento" style="width: ${j.frequenciaAno}%; background-color: ${corFreq};"></div></div>
+          </div>
+
+          <div class="selos-projetos">${selosHtml}</div>
+          ${camisaInfo}
+
+          <div class="dados-rapidos">
+            <div class="dado-item">Igreja: <strong>${j.dataIgreja}</strong></div>
+            <div class="dado-item">Tribo: <strong>${j.dataTribo}</strong></div>
+            <div class="dado-item">Civil: <strong>${j.estadoCivil}</strong></div>
+            <div class="dado-item">${reuniaoTexto}: <strong>Pendente</strong></div>
+          </div>
+
+          <button class="btn-dossie" onclick="abrirDossie(${index})">📄 Abrir Painel do Jovem</button>
+        </div>
+      `;
+    });
+
+    // Atualiza linha cinza de Projetos
+    let painelProjHtml = '';
+    for (let proj in contagemProjetos) {
+        painelProjHtml += `<button class="btn-projeto-stat" onclick="mostrarDetalhesProjeto('${proj}')"><h5>${proj}</h5><span>${contagemProjetos[proj]}</span></button>`;
+    }
+    painelProjHtml += `<button class="btn-projeto-stat" onclick="mostrarDetalhesProjeto('Sem Projeto')" style="border-color:#ffa726;"><h5 style="color:#e65100;">Sem Projeto</h5><span style="color:#e65100;">${stats.semProj}</span></button>`;
+    
+    document.getElementById('painel-projetos-header').innerHTML = painelProjHtml;
+    document.getElementById('total-com-camisa').innerText = stats.camisaSim;
+    document.getElementById('total-sem-camisa').innerText = stats.camisaNao;
+
+    // Atualiza Topo
+    document.getElementById('count-obr').innerText = stats.obr;
+    document.getElementById('count-col').innerText = stats.col;
+    document.getElementById('count-cpo').innerText = stats.cpo;
+    document.getElementById('count-jf').innerText = stats.jf;
+
+    document.getElementById('stat-es-jovens').innerText = `${stats.es} / ${stats.jf}`;
+    document.getElementById('stat-es-pct').innerText = stats.jf > 0 ? Math.round((stats.es / stats.jf) * 100) + "% com ES" : "0%";
+    document.getElementById('stat-homens').innerText = stats.h;
+    document.getElementById('stat-mulheres').innerText = stats.m;
+
+    let pctMaio = stats.maioEsp > 0 ? Math.round((stats.maioPres / stats.maioEsp) * 100) : 0;
+    let pctJunho = stats.junEsp > 0 ? Math.round((stats.junPres / stats.junEsp) * 100) : 0;
+    document.getElementById('stat-freq-maio').innerText = `Maio: ${pctMaio}%`;
+    document.getElementById('stat-freq-junho').innerText = `Junho: ${pctJunho}%`;
+  }
+
+  function abrirDossie(index) {
+    const j = baseJovens[index];
+    
+    document.getElementById('modal-nome').innerText = j.nome;
+    document.getElementById('modal-categoria').innerText = j.categoria;
+    document.getElementById('modal-data-igreja').innerText = j.dataIgreja;
+    document.getElementById('modal-data-tribo').innerText = j.dataTribo;
+    document.getElementById('modal-como').innerText = j.comoConheceu;
+    document.getElementById('modal-civil').innerText = j.estadoCivil;
+    document.getElementById('modal-conjuge').innerText = j.conjuge;
+    
+    let infoProjeto = j.projetos ? j.projetos : 'Sem Projeto';
+    if (!infoProjeto.toLowerCase().includes('sem projeto')) {
+        infoProjeto += j.camisa ? ' (Com Camisa do Projeto)' : ' (Sem Camisa do Projeto)';
+    }
+    document.getElementById('modal-projetos').innerText = infoProjeto;
+    document.getElementById('modal-freq-ano').innerText = j.frequenciaAno + "%";
+    document.getElementById('modal-faltas-seq').innerText = j.faltasSeguidas;
+
+    let txtReuniao = j.genero === 'M' ? '👔 Participou da última reunião do IntelliMen? ' : '🌸 Participou da última reunião do Godllywood? ';
+    document.getElementById('modal-reuniao-secundaria').innerHTML = txtReuniao + '<span style="color:var(--texto-claro)">A confirmar</span>';
+
+    document.getElementById('chk-es').checked = j.espiritoSanto;
+    document.getElementById('chk-aguas').checked = j.batismoAguas;
+
+    const boxAlerta = document.getElementById('alerta-pastoral');
+    if(j.faltasSeguidas === 1) {
+        boxAlerta.style.display = 'block'; boxAlerta.className = 'box-alerta-pastoral'; boxAlerta.style.background = '#fff3e0'; boxAlerta.style.color = '#ef6c00'; boxAlerta.style.border = '1px solid #ffe0b2';
+        boxAlerta.innerHTML = `<strong>⚠️ ATENÇÃO LIGAR:</strong> Faltou ao último encontro. Recomendado enviar uma mensagem ou ligar.`;
+    } else if(j.faltasSeguidas >= 2) {
+        boxAlerta.style.display = 'block'; boxAlerta.className = 'box-alerta-pastoral'; boxAlerta.style.background = '#ffebee'; boxAlerta.style.color = '#c62828'; boxAlerta.style.border = '1px solid #ffcdd2';
+        boxAlerta.innerHTML = `<strong>🚨 RESGATE CRÍTICO (🕳️):</strong> Este membro faltou 2 ou mais encontros seguidos. Visita ou ligação pastoral urgente recomendada!`;
+    } else {
+        boxAlerta.style.display = 'none';
+    }
+
+    let htmlPresencas = '';
+    for(let i=0; i < datasEventos.length; i++) {
+        let icone = j.presencas[i] === 1 ? '🟢' : '❌';
+        htmlPresencas += `<div class="presenca-item">${datasEventos[i]}<br>${icone}</div>`;
+    }
+    document.getElementById('modal-presencas').innerHTML = htmlPresencas;
+
+    document.getElementById('modalDossie').style.display = "flex";
+  }
+
+  function fecharModal() { document.getElementById('modalDossie').style.display = "none"; }
+</script>
+</body>
+</html>
